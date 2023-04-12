@@ -1,13 +1,12 @@
-extends Node2D
+extends TileMap
 
 var room_width: int
 var room_height: int
 
 var stack: Array[Vector2i] = []
 
-@onready var tilemap: TileMap = get_node("TileMap")
-@onready var generate_button: Button = get_node("UI/Button")
-@onready var speed_button: Button = get_node("UI/SpeedButton")
+@onready var generate_button: Button = get_node("UI/HBoxContainer/GenerateButton")
+@onready var speed_button: Button = get_node("UI/HBoxContainer/SpeedButton")
 
 enum {
 	WATER, 
@@ -31,48 +30,46 @@ var timer_speed = 0
 func _ready():
 	room_width = ProjectSettings.get("display/window/size/viewport_width")/16
 	room_height = ProjectSettings.get("display/window/size/viewport_height")/16
-	print(Engine.get_license_text())
-	#print(Engine.get_copyright_info())
 	fill_world()
 	
 func get_empty_neighbors(xx: int, yy: int): 
 	var neighbors = []
-	if xx > 0 and tilemap.get_cell_source_id(0, Vector2i(xx - 1, yy)) == -1: 
+	if xx > 0 and get_cell_source_id(0, Vector2i(xx - 1, yy)) == -1: 
 		neighbors.append(Vector2i(xx - 1, yy))
-	if xx < room_width - 1 and tilemap.get_cell_source_id(0, Vector2i(xx + 1, yy)) == -1: 
+	if xx < room_width - 1 and get_cell_source_id(0, Vector2i(xx + 1, yy)) == -1: 
 		neighbors.append(Vector2i(xx + 1, yy) )
-	if yy > 0 and tilemap.get_cell_source_id(0, Vector2i(xx, yy - 1)) == -1: 
+	if yy > 0 and get_cell_source_id(0, Vector2i(xx, yy - 1)) == -1: 
 		neighbors.append(Vector2i(xx, yy - 1))
-	if yy < room_height - 1 and tilemap.get_cell_source_id(0, Vector2i(xx, yy + 1)) == -1: 
+	if yy < room_height - 1 and get_cell_source_id(0, Vector2i(xx, yy + 1)) == -1: 
 		neighbors.append(Vector2i(xx, yy + 1))
-	if xx > 0 and yy > 0 and tilemap.get_cell_source_id(0, Vector2i(xx - 1, yy - 1)) == -1: 
+	if xx > 0 and yy > 0 and get_cell_source_id(0, Vector2i(xx - 1, yy - 1)) == -1: 
 		neighbors.append(Vector2i(xx - 1, yy - 1))
-	if xx > 0 and yy < room_height - 1 and tilemap.get_cell_source_id(0, Vector2i(xx - 1, yy + 1)) == -1: 
+	if xx > 0 and yy < room_height - 1 and get_cell_source_id(0, Vector2i(xx - 1, yy + 1)) == -1: 
 		neighbors.append(Vector2i(xx - 1, yy + 1))
-	if xx < room_width - 1 and yy > 0 and tilemap.get_cell_source_id(0, Vector2i(xx + 1, yy - 1)) == - 1: 
+	if xx < room_width - 1 and yy > 0 and get_cell_source_id(0, Vector2i(xx + 1, yy - 1)) == - 1: 
 		neighbors.append(Vector2i(xx + 1, yy - 1))
-	if xx < room_width - 1 and yy < room_height - 1 and tilemap.get_cell_source_id(0, Vector2i(xx + 1, yy + 1)) == -1: 
+	if xx < room_width - 1 and yy < room_height - 1 and get_cell_source_id(0, Vector2i(xx + 1, yy + 1)) == -1: 
 		neighbors.append(Vector2i(xx + 1, yy + 1))
 		
 	return neighbors
 	
 func get_full_neighbors(xx: int, yy: int): 
 	var neighbors = []
-	if xx > 0 and tilemap.get_cell_source_id(0, Vector2i(xx - 1, yy)) != -1: 
+	if xx > 0 and get_cell_source_id(0, Vector2i(xx - 1, yy)) != -1: 
 		neighbors.append(Vector2i(xx - 1, yy))
-	if xx < room_width - 1 and tilemap.get_cell_source_id(0, Vector2i(xx + 1, yy)) != -1: 
+	if xx < room_width - 1 and get_cell_source_id(0, Vector2i(xx + 1, yy)) != -1: 
 		neighbors.append(Vector2i(xx + 1, yy) )
-	if yy > 0 and tilemap.get_cell_source_id(0, Vector2i(xx, yy - 1)) != -1: 
+	if yy > 0 and get_cell_source_id(0, Vector2i(xx, yy - 1)) != -1: 
 		neighbors.append(Vector2i(xx, yy - 1))
-	if yy < room_height - 1 and tilemap.get_cell_source_id(0, Vector2i(xx, yy + 1)) != -1: 
+	if yy < room_height - 1 and get_cell_source_id(0, Vector2i(xx, yy + 1)) != -1: 
 		neighbors.append(Vector2i(xx, yy + 1))
-	if xx > 0 and yy > 0 and tilemap.get_cell_source_id(0, Vector2i(xx - 1, yy - 1)) != -1: 
+	if xx > 0 and yy > 0 and get_cell_source_id(0, Vector2i(xx - 1, yy - 1)) != -1: 
 		neighbors.append(Vector2i(xx - 1, yy - 1))
-	if xx > 0 and yy < room_height - 1 and tilemap.get_cell_source_id(0, Vector2i(xx - 1, yy + 1)) != -1: 
+	if xx > 0 and yy < room_height - 1 and get_cell_source_id(0, Vector2i(xx - 1, yy + 1)) != -1: 
 		neighbors.append(Vector2i(xx - 1, yy + 1))
-	if xx < room_width - 1 and yy > 0 and tilemap.get_cell_source_id(0, Vector2i(xx + 1, yy - 1)) != - 1: 
+	if xx < room_width - 1 and yy > 0 and get_cell_source_id(0, Vector2i(xx + 1, yy - 1)) != - 1: 
 		neighbors.append(Vector2i(xx + 1, yy - 1))
-	if xx < room_width - 1 and yy < room_height - 1 and tilemap.get_cell_source_id(0, Vector2i(xx + 1, yy + 1)) != -1: 
+	if xx < room_width - 1 and yy < room_height - 1 and get_cell_source_id(0, Vector2i(xx + 1, yy + 1)) != -1: 
 		neighbors.append(Vector2i(xx + 1, yy + 1))
 	return neighbors
 	
@@ -80,7 +77,7 @@ func valid_area(cell: Vector2i):
 	var options = [WATER, SAND, GRASS, TREE]
 	var neighbors = get_full_neighbors(cell.x, cell.y)
 	for n in neighbors: 
-		var tile = tilemap.get_cell_atlas_coords(0, n).x
+		var tile = get_cell_atlas_coords(0, n).x
 		match tile: 
 			WATER: 
 				options.erase(GRASS)
@@ -105,16 +102,16 @@ func valid_area(cell: Vector2i):
 func fill_world(): 
 	var xx = int(room_width / 2)
 	var yy = int(room_height / 2)
-	tilemap.set_cell(0, Vector2i(xx, yy), 0, Vector2i(randi_range(WATER, TREE), 0))
+	set_cell(0, Vector2i(xx, yy), 0, Vector2i(randi_range(WATER, TREE), 0))
 	for n in get_empty_neighbors(xx, yy): 
 		stack.append(n)
 	while  stack.size() > 0: 
 		var front: Vector2i = stack.pop_front()
-		if tilemap.get_cell_source_id(0, front) != -1: 
+		if get_cell_source_id(0, front) != -1: 
 			continue
 		var options = valid_area(front)
 		if options.size() > 0: 
-			tilemap.set_cell(0, front, 0, Vector2i(options.pick_random(), 0))
+			set_cell(0, front, 0, Vector2i(options.pick_random(), 0))
 			for n in get_empty_neighbors(front.x, front.y): 
 				if n not in stack: 
 					stack.append(n)
@@ -125,28 +122,22 @@ func fill_world():
 func clean(): 
 	for i in range(room_width):
 		for j in range(room_height): 
-			tilemap.set_cell(0, Vector2i(i, j))
-
-
-func _on_button_pressed():
-	generate_button.disabled = true
-	clean()
-	fill_world()
+			set_cell(0, Vector2i(i, j))
 
 func set_speed(value): 
 	speed = wrapi(value, INSTANT, FAST + 1)
 	match speed: 
 		INSTANT: 
-			speed_button.text = "INSTANT"
+			speed_button.text = "Speed: Instant"
 			timer_speed = 0
 		SLOW: 
-			speed_button.text = "SLOW"
+			speed_button.text = "Speed: Slow"
 			timer_speed = 0.1
 		MEDIUM: 
-			speed_button.text = "MEDIUM"
+			speed_button.text = "Speed: Medium"
 			timer_speed = 0.05
 		FAST: 
-			speed_button.text = "FAST"
+			speed_button.text = "Speed: Fast"
 			timer_speed = 0.001
 
 func _on_world_filled():
@@ -154,3 +145,12 @@ func _on_world_filled():
 
 func _on_speed_button_pressed():
 	self.speed += 1
+
+func _on_generate_button_pressed():
+	generate_button.disabled = true
+	clean()
+	fill_world()
+
+
+func _on_exit_button_pressed():
+	get_tree().change_scene_to_file("res://Menus/start_menu.tscn")

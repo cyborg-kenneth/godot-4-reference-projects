@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="wave_function_collapse"
-run/main_scene="res://wfc.tscn"
+config/name="Wave Function Collapse (Demo)"
+run/main_scene="res://Menus/start_menu.tscn"
 config/features=PackedStringArray("4.0", "Forward Plus")
 config/icon="res://icon.svg"
 
