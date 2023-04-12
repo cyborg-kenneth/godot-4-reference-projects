@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://u08xy50xl3u4"]
+
+[ext_resource type="Script" path="res://FullProceduralMaze.gd" id="1_ktypk"]
+[ext_resource type="PackedScene" uid="uid://6huqt45qnva1" path="res://tile_map.tscn" id="2_mt0ot"]
+
+[node name="FullProceduralMaze" type="Node2D"]
+script = ExtResource("1_ktypk")
+
+[node name="TileMap" parent="." instance=ExtResource("2_mt0ot")]
